@@ -10,6 +10,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { IconBrandGoogle } from '@tabler/icons-react'
+import { FirebaseError } from 'firebase/app'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -30,7 +31,11 @@ export default function LoginPage() {
       await signInWithEmailAndPassword(auth, email, password)
       router.push('/products')
     } catch (error) {
-      setError('Failed to login. Please check your credentials.')
+      if (error instanceof FirebaseError) {
+        setError(error.message)
+      } else {
+        setError('Failed to login. Please check your credentials.')
+      }
     }
   }
 
@@ -40,7 +45,11 @@ export default function LoginPage() {
       await signInWithPopup(auth, provider)
       router.push('/products')
     } catch (error) {
-      setError('Failed to login with Google.')
+      if (error instanceof FirebaseError) {
+        setError(error.message)
+      } else {
+        setError('Failed to login with Google.')
+      }
     }
   }
 
