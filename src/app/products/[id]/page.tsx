@@ -6,8 +6,7 @@ export default async function ProductPage({
 }: {
   params: { id: string }
 }) {
-  const { id } = await params
-  const response = await fetch(`https://dummyjson.com/products/${id}`)
+  const response = await fetch(`https://dummyjson.com/products/${params.id}`)
   const product: Product = await response.json()
 
   return (
