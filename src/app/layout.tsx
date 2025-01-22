@@ -4,6 +4,7 @@ import './globals.css'
 
 import Navigation from '@/components/Navigation'
 import Footer from '@/components/Footer'
+import { AuthProvider } from '@/contexts/AuthContext'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -30,14 +31,16 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
-        <header className='bg-gray-800 text-white py-4'>
-          <Navigation />
-        </header>
+        <AuthProvider>
+          <header className='bg-gray-800 text-white py-4'>
+            <Navigation />
+          </header>
 
-        <main className='flex-grow container mx-auto px-4 py-8'>
-          {children}
-        </main>
-        <Footer />
+          <main className='flex-grow container mx-auto px-4 py-8'>
+            {children}
+          </main>
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   )

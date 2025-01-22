@@ -3,17 +3,33 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { usePathname } from 'next/navigation'
+import { useAuth } from '@/contexts/AuthContext'
+import { auth } from '@/lib/firebase/config'
+import { IconLogout } from '@tabler/icons-react'
 
 export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const pathname = usePathname()
+  const { user } = useAuth()
 
   const links = [
     { href: '/', label: 'Home' },
     { href: '/products', label: 'Products' },
-    { href: '/login', label: 'Login' },
-    { href: '/register', label: 'Register' },
+    ...(user
+      ? []
+      : [
+          { href: '/login', label: 'Login' },
+          { href: '/register', label: 'Register' },
+        ]),
   ]
+
+  const handleLogout = async () => {
+    try {
+      await auth.signOut()
+    } catch (error) {
+      console.error('Error signing out:', error)
+    }
+  }
 
   return (
     <nav className='container mx-auto px-4 relative'>
@@ -32,7 +48,7 @@ export default function Navigation() {
         </button>
 
         {/* Desktop menu */}
-        <ul className='hidden md:flex space-x-6'>
+        <ul className='hidden md:flex space-x-6 items-center'>
           {links.map(({ href, label }) => (
             <li key={href}>
               <Link
@@ -45,6 +61,16 @@ export default function Navigation() {
               </Link>
             </li>
           ))}
+          {user && (
+            <li>
+              <button
+                onClick={handleLogout}
+                className='flex items-center gap-2 text-gray-300 hover:text-white transition-colors'
+              >
+                <span>Logout</span>
+              </button>
+            </li>
+          )}
         </ul>
       </div>
 
@@ -65,6 +91,17 @@ export default function Navigation() {
                 </Link>
               </li>
             ))}
+            {user && (
+              <li>
+                <button
+                  onClick={handleLogout}
+                  className='flex items-center gap-2 text-gray-300 hover:text-white transition-colors py-1'
+                >
+                  <IconLogout size={20} />
+                  <span>Logout</span>
+                </button>
+              </li>
+            )}
           </ul>
         </div>
       )}
