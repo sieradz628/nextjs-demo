@@ -5,6 +5,7 @@ import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
+import { FirebaseError } from 'firebase/app'
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('')
@@ -24,11 +25,18 @@ export default function RegisterPage() {
     try {
       await createUserWithEmailAndPassword(auth, email, password)
       router.push('/products')
-    } catch (error: any) {
-      if (error.code === 'auth/email-already-in-use') {
-        setError('This email is already registered.')
-      } else if (error.code === 'auth/weak-password') {
-        setError('Password should be at least 6 characters.')
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        switch (error.code) {
+          case 'auth/email-already-in-use':
+            setError('This email is already registered.')
+            break
+          case 'auth/weak-password':
+            setError('Password should be at least 6 characters.')
+            break
+          default:
+            setError('Failed to create account.')
+        }
       } else {
         setError('Failed to create account.')
       }
