@@ -1,12 +1,12 @@
 import { Product } from '@/app/types/products'
-import React from 'react'
 
-export default async function ProductPage({
-  params,
-}: {
-  params: { id: string }
-}) {
-  const response = await fetch(`https://dummyjson.com/products/${params.id}`)
+interface PageProps {
+  params: Promise<{ id: string }>
+}
+
+export default async function ProductPage({ params }: PageProps) {
+  const { id } = await params
+  const response = await fetch(`https://dummyjson.com/products/${id}`)
   const product: Product = await response.json()
 
   return (
